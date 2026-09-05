@@ -85,6 +85,35 @@ export class ItemsService {
     };
   }
 
+  async clearBought(userId: string) {
+    const snapshot = await this.firebaseService.firestore
+      .collection('users')
+      .doc(userId)
+      .collection('items')
+      .where('bought', '==', true)
+      .get();
+
+    if (snapshot.empty) {
+      return {
+        message: 'No bought items to clear',
+        deletedCount: 0,
+      };
+    }
+
+    const batch = this.firebaseService.firestore.batch();
+
+    snapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+
+    return {
+      message: 'Bought items cleared successfully',
+      deletedCount: snapshot.size,
+    };
+  }
+
   async remove(userId: string, itemId: string) {
     const itemRef = this.firebaseService.firestore
       .collection('users')

@@ -49,6 +49,15 @@ export class ItemsController {
     return this.itemsService.toggleBought(userId.trim(), itemId);
   }
 
+  @Delete('bought/clear')
+  clearBought(@Headers('x-user-id') userId: string | undefined) {
+    if (!userId?.trim()) {
+      throw new BadRequestException('x-user-id header is required');
+    }
+
+    return this.itemsService.clearBought(userId.trim());
+  }
+
   @Delete(':id')
   remove(
     @Headers('x-user-id') userId: string | undefined,
