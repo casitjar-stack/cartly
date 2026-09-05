@@ -4,6 +4,8 @@ import {
   Controller,
   Get,
   Headers,
+  Param,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -32,5 +34,17 @@ export class ItemsController {
     }
 
     return this.itemsService.create(userId.trim(), dto);
+  }
+
+  @Patch(':id/toggle')
+  toggleBought(
+    @Headers('x-user-id') userId: string | undefined,
+    @Param('id') itemId: string,
+  ) {
+    if (!userId?.trim()) {
+      throw new BadRequestException('x-user-id header is required');
+    }
+
+    return this.itemsService.toggleBought(userId.trim(), itemId);
   }
 }

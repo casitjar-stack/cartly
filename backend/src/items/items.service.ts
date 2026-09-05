@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Timestamp } from 'firebase-admin/firestore';
 import { FirebaseService } from '../firebase/firebase.service';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -54,5 +54,34 @@ export class ItemsService {
         createdAt: data.createdAt.toDate().toISOString(),
       };
     });
+  }
+
+  async toggleBought(userId: string, itemId: string) {
+    const itemRef = this.firebaseService.firestore
+      .collection('users')
+      .doc(userId)
+      .collection('items')
+      .doc(itemId);
+
+    const snapshot = await itemRef.get();
+
+    if (!snapshot.exists) {
+      throw new NotFoundException('Item not found');
+    }
+
+    const data = snapshot.data();
+    const bought = !Boolean(data?.bought);
+
+    await itemRef.update({
+      bought,
+    });
+
+    return {
+      id: snapshot.id,
+      name: data?.name,
+      quantity: data?.quantity,
+      bought,
+      createdAt: data?.createdAt.toDate().toISOString(),
+    };
   }
 }
