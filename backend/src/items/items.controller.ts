@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Headers,
   Post,
 } from '@nestjs/common';
@@ -11,6 +12,15 @@ import { ItemsService } from './items.service';
 @Controller('items')
 export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
+
+  @Get()
+  findAll(@Headers('x-user-id') userId: string | undefined) {
+    if (!userId?.trim()) {
+      throw new BadRequestException('x-user-id header is required');
+    }
+
+    return this.itemsService.findAll(userId.trim());
+  }
 
   @Post()
   create(

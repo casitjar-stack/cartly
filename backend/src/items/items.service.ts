@@ -33,4 +33,26 @@ export class ItemsService {
       createdAt: createdAt.toDate().toISOString(),
     };
   }
+
+  async findAll(userId: string) {
+    const snapshot = await this.firebaseService.firestore
+      .collection('users')
+      .doc(userId)
+      .collection('items')
+      .orderBy('bought', 'asc')
+      .orderBy('createdAt', 'desc')
+      .get();
+
+    return snapshot.docs.map((doc) => {
+      const data = doc.data();
+
+      return {
+        id: doc.id,
+        name: data.name,
+        quantity: data.quantity,
+        bought: data.bought,
+        createdAt: data.createdAt.toDate().toISOString(),
+      };
+    });
+  }
 }
