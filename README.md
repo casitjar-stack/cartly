@@ -331,3 +331,8 @@ See [DESIGN.md](DESIGN.md) for:
 - Firestore data model
 - API-to-user-story mapping
 - Engineering trade-offs
+
+## Author
+
+Cristian Angelo M. Sitjar  
+GitHub: casitjar-stack
