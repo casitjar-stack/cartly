@@ -84,4 +84,25 @@ export class ItemsService {
       createdAt: data?.createdAt.toDate().toISOString(),
     };
   }
+
+  async remove(userId: string, itemId: string) {
+    const itemRef = this.firebaseService.firestore
+      .collection('users')
+      .doc(userId)
+      .collection('items')
+      .doc(itemId);
+
+    const snapshot = await itemRef.get();
+
+    if (!snapshot.exists) {
+      throw new NotFoundException('Item not found');
+    }
+
+    await itemRef.delete();
+
+    return {
+      message: 'Item deleted successfully',
+      id: itemId,
+    };
+  }
 }

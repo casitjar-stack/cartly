@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Delete,
   Get,
   Headers,
   Param,
@@ -46,5 +47,17 @@ export class ItemsController {
     }
 
     return this.itemsService.toggleBought(userId.trim(), itemId);
+  }
+
+  @Delete(':id')
+  remove(
+    @Headers('x-user-id') userId: string | undefined,
+    @Param('id') itemId: string,
+  ) {
+    if (!userId?.trim()) {
+      throw new BadRequestException('x-user-id header is required');
+    }
+
+    return this.itemsService.remove(userId.trim(), itemId);
   }
 }
